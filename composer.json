@@ -1,0 +1,25 @@
+{
+  "name": "org_heigl/error_focus",
+  "description": "Remove messages from the error log that are from a certain folder",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Andreas Heigl",
+      "email": "andreas@heigl.org"
+    }
+  ],
+  "require": {
+    "php": "~5.6|^7.0|^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Org_Heigl\\ErrorFocus\\" : "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Org_Heigl\\ErrorFocusTest\\": "tests/"
+    }
+  }
+}
