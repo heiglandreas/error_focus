@@ -10,6 +10,8 @@ namespace Org_Heigl\ErrorFocus;
 
 
 use SplFileInfo;
+use function error_get_last;
+use function var_dump;
 
 class ErrorHandler
 {
@@ -45,7 +47,7 @@ class ErrorHandler
             return false;
         }
 
-        if (strpos($errfile, $this->basePath->getPathname()) === 0) {
+        if (strpos($errfile, $this->basePath->getRealPath()) === 0) {
             return true;
         }
 

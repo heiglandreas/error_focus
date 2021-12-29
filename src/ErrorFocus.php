@@ -25,7 +25,6 @@ class ErrorFocus
         foreach ($additionalErrorHandlers as $handler) {
             $list->addAdditionalErrorHandler($handler);
         }
-    }
 
         set_error_handler($list);
     }

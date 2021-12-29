@@ -1,0 +1,12 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+max_line_length = off
+tab_width = 4
+indent_size = tab
+indent_style = tab
+
+[*.json]
+tab_width = 2

@@ -9,7 +9,7 @@ namespace Org_Heigl\ErrorFocus;
  */
 class ErrorHandlerList
 {
-    private $list;
+    private $list = [];
 
     private $furtherHandlers;
 

@@ -1,3 +1,3 @@
 <?php
 
-trigger_Error(__DIR__);
+trigger_Error('Foo');

@@ -16,6 +16,7 @@
     <testsuites>
         <testsuite name="default">
             <directory>tests</directory>
+            <directory suffix=".phpt">tests</directory>
         </testsuite>
     </testsuites>
 

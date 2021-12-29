@@ -10,9 +10,35 @@ namespace Org_Heigl\ErrorFocusTest;
 use Org_Heigl\ErrorFocus\ErrorHandler;
 use Org_Heigl\ErrorFocus\ErrorHandlerList;
 use PHPUnit\Framework\TestCase;
+use function stream_filter_prepend;
+use function stream_filter_register;
+use function stream_filter_remove;
+use function trigger_error;
+use const STDERR;
+use const STREAM_FILTER_ALL;
+use const STREAM_FILTER_WRITE;
 
-class FunctionalTest extends TestCase
+class FunctionalTests extends TestCase
 {
+    private const STREAM_FILTER = 'stream_filter_test';
+
+	private $streamFilter = null;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        stream_filter_register(self::STREAM_FILTER, Tie::class);
+        $this->streamFilter = stream_filter_prepend(STDERR, self::STREAM_FILTER, STREAM_FILTER_WRITE);
+    }
+
+    public function tearDown(): void
+    {
+        stream_filter_remove($this->streamFilter);
+
+        parent::tearDown();
+    }
+
     /**
      * @testdox Triggering error inside scope does not cause an error to show up in the error-log
      * @covers \Org_Heigl\ErrorFocus\ErrorHandler::__invoke
@@ -21,25 +47,9 @@ class FunctionalTest extends TestCase
     {
         $errorHandler = ErrorHandler::fromString(__DIR__);
 
-        $file =  tempnam(sys_get_temp_dir(), 'test');
-        ini_set('error_log',$file);
-        set_error_handler(function ($a, $b, $c, $d, $e) use ($file) {
-            $handler = fopen($file, 'a');
-            fwrite($handler, $b);
-            fclose($handler);
-        });
-
-        $handler = fopen($file, 'r');
-        self::assertEmpty(fread($handler, 1024));
-        trigger_error('WTF');
-        self::assertNotEmpty(fread($handler, 1024));
-
         set_error_handler($errorHandler);
         trigger_error('WTF');
-        self::assertEmpty(fread($handler, 1024));
-
-        fclose($handler);
-        unlink($file);
+        self::assertEmpty(Tie::$cache);
     }
 
     /**
@@ -50,24 +60,10 @@ class FunctionalTest extends TestCase
     {
         $errorHandler = ErrorHandler::fromString(__DIR__ . '/../src');
 
-        $file =  tempnam(sys_get_temp_dir(), 'test');
-        ini_set('error_log',$file);
-        set_error_handler(function ($a, $b, $c, $d, $e) use ($file) {
-            $handler = fopen($file, 'a');
-            fwrite($handler, $b);
-            fclose($handler);
-        });
-
-        $handler = fopen($file, 'r');
-        self::assertEmpty(fread($handler, 1024));
-        trigger_error('WTF');
-        self::assertNotEmpty(fread($handler, 1024));
-
         set_error_handler($errorHandler);
         trigger_error('WTF');
-        self::assertMatchesRegularExpression('/ WTF /', fread($handler, 1024));
-        fclose($handler);
-        unlink($file);
+
+		self::assertEmpty(Tie::$cache);
     }
 
     /**
@@ -84,7 +80,7 @@ class FunctionalTest extends TestCase
 
         $file =  tempnam(sys_get_temp_dir(), 'test');
         ini_set('error_log',$file);
-        set_error_handler(function ($a, $b, $c, $d, $e) use ($file) {
+        set_error_handler(function ($a, $b, $c, $d, $e = null) use ($file) {
             $handler = fopen($file, 'a');
             fwrite($handler, $b);
             fclose($handler);
