@@ -26,6 +26,9 @@ class ErrorFocus
             $list->addAdditionalErrorHandler($handler);
         }
 
-        set_error_handler($list);
+        $previousHandler = set_error_handler($list);
+	if (null !== $previousHandler) {
+	    $list->addAdditionalErrorHandler($previousHandler);
+	}
     }
 }
