@@ -33,11 +33,11 @@ jobs:
 
       - name: "Determine composer cache directory"
         id: "determine-composer-cache-directory"
-        run: "echo \"::set-output name=directory::$(composer config -g cache-dir)\""
+        run: echo "directory"="$(composer config -g cache-dir)" >> $GITHUB_OUTPUT
 
       - name: "Cache composer cache dir"
         if: "steps.cache-vendor-dir.outputs.cache-hit != 'true'"
-        uses: "actions/cache@v2"
+        uses: "actions/cache@v3"
         with:
           path: |
             ${{ steps.determine-composer-cache-directory.outputs.directory }}
@@ -45,10 +45,13 @@ jobs:
           restore-keys: "composer-cache-"
 
       - name: "Install tools"
-        run: "phive install --force-accept-unsigned --trust-gpg-keys 4AA394086372C20A"
+        run: "phive install --force-accept-unsigned --trust-gpg-keys 4AA394086372C20A,51C67305FFC2E5C0"
 
       - name: "Lint PHP files"
         run: "tools/parallel-lint src"
+
+      - name: "Run PHPStan"
+        run: "tools/phpstan analyze src"
 
   tests:
     name: "Tests"
@@ -78,7 +81,7 @@ jobs:
 
       - name: "Cache composer cache dir"
         if: "steps.cache-vendor-dir.outputs.cache-hit != 'true'"
-        uses: "actions/cache@v2"
+        uses: "actions/cache@v3"
         with:
           path: |
             ${{ steps.determine-composer-cache-directory.outputs.directory }}
@@ -89,7 +92,7 @@ jobs:
         run: "composer install ${{ env.COMPOSER_FLAGS }}"
 
       - name: "Install tools"
-        run: "phive install --force-accept-unsigned --trust-gpg-keys 4AA394086372C20A"
+        run: "phive install --force-accept-unsigned --trust-gpg-keys 4AA394086372C20A,51C67305FFC2E5C0"
 
       - name: "Run tests"
         run: "tools/phpunit"

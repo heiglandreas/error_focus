@@ -1,57 +1,15 @@
 <?php
 
-/**
- * Copyright Andreas Heigl <andreas@heigl.org>
- *
- * Licenses under the MIT-license. For details see the included file LICENSE.md
+/*
+ * Copyright (c) Andreas Heigl<andreas@heigl.org
+ * 
+ * Licensed under the MIT License. See LICENSE.md file in the project root
+ * for full license information.
  */
 
 namespace Org_Heigl\ErrorFocus;
 
-
-use SplFileInfo;
-use function error_get_last;
-use function var_dump;
-
-class ErrorHandler
+interface ErrorHandler
 {
-    /** @var SplFileInfo */
-    private $basePath;
-
-    private function __construct(SplFileInfo $basePath)
-    {
-        $this->basePath = $basePath;
-    }
-
-    public static function fromString($basePath)
-    {
-        return self::fromSplFileInfo(new SplFileInfo(realpath($basePath)));
-    }
-
-    public static function fromSplFileInfo(SplFileInfo $basePath)
-    {
-        return new self($basePath);
-    }
-
-    /**
-     * @param int $errno,
-     * @param string $errstr,
-     * @param string $errfile = ?,
-     * @param int $errline = ?,
-     * @param array $errcontext = ?
-     */
-    public function __invoke($errno, $errstr, $errfile, $errline, array $errcontext = [])
-    {
-        $errfile = realpath($errfile);
-        if (false === $errfile) {
-            return false;
-        }
-
-        if (strpos($errfile, $this->basePath->getRealPath()) === 0) {
-            return true;
-        }
-
-        return false;
-    }
-
+	public function __invoke($errno, $errstr, $errfile, $errline, array $errcontext = []): bool;
 }
