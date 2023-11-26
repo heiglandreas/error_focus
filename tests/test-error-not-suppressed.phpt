@@ -4,7 +4,7 @@ Error Suppressed when raised within defined folder
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$errorHandler = \Org_Heigl\ErrorFocus\ErrorHandler::fromString(__DIR__ . '/asset1');
+$errorHandler = \Org_Heigl\ErrorFocus\ErrorHandlerPath::fromString(__DIR__ . '/asset1');
 
 set_error_handler($errorHandler);
 

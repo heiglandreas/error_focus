@@ -9,6 +9,7 @@ namespace Org_Heigl\ErrorFocusTest;
 
 use Org_Heigl\ErrorFocus\ErrorHandler;
 use Org_Heigl\ErrorFocus\ErrorHandlerList;
+use Org_Heigl\ErrorFocus\ErrorHandlerPath;
 use PHPUnit\Framework\TestCase;
 use function stream_filter_prepend;
 use function stream_filter_register;
@@ -45,7 +46,7 @@ class FunctionalTests extends TestCase
      */
     public function testRaiseExceptionInClassInsideScope()
     {
-        $errorHandler = ErrorHandler::fromString(__DIR__);
+        $errorHandler = ErrorHandlerPath::fromString(__DIR__);
 
         set_error_handler($errorHandler);
         trigger_error('WTF');
@@ -58,7 +59,7 @@ class FunctionalTests extends TestCase
      */
     public function testRaiseExceptionInClassOutsideScope()
     {
-        $errorHandler = ErrorHandler::fromString(__DIR__ . '/../src');
+        $errorHandler = ErrorHandlerPath::fromString(__DIR__ . '/../src');
 
         set_error_handler($errorHandler);
         trigger_error('WTF');
@@ -68,12 +69,12 @@ class FunctionalTests extends TestCase
 
     /**
      * @testdox Removing errors from multiple scopes works
-     * @covers \Org_Heigl\ErrorFocus\ErrorHandler::__invoke
+     * @covers \Org_Heigl\ErrorFocus\ErrorHandlerPath::__invoke
      */
     public function testRemoveErrorsFromMultipleScopes()
     {
-        $errorHandler1 = ErrorHandler::fromString(__DIR__ . '/asset1');
-        $errorHandler2 = ErrorHandler::fromString(__DIR__ . '/asset2');
+        $errorHandler1 = ErrorHandlerPath::fromString(__DIR__ . '/asset1');
+        $errorHandler2 = ErrorHandlerPath::fromString(__DIR__ . '/asset2');
         $errorHandler = new ErrorHandlerList();
         $errorHandler->addErrorHandler($errorHandler1);
         $errorHandler->addErrorHandler($errorHandler2);

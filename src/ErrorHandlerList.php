@@ -11,7 +11,7 @@ class ErrorHandlerList
 {
     private $list = [];
 
-    private $furtherHandlers;
+    private $furtherHandlers = [];
 
     public function addErrorHandler(ErrorHandler $handler)
     {
@@ -32,18 +32,20 @@ class ErrorHandlerList
      */
     public function __invoke($errno, $errstr, $errfile, $errline, array $errcontext = [])
     {
+		$returnValue = false;
         foreach ($this->list as $handler) {
+			if ($handler instanceof ErrorHandlerCallback) {
+				$handler($errno, $errstr, $errfile, $errline, $errcontext);
+				continue;
+			}
             if (true === $handler($errno, $errstr, $errfile, $errline, $errcontext)) {
-                return true;
+                $returnValue = true;
             }
-        }
-        if (empty($this->furtherHandlers)) {
-            return false;
         }
 
         foreach ($this->furtherHandlers as $handler) {
             $handler($errno, $errstr, $errfile, $errline, $errcontext);
         }
 
-        return true;
+        return $returnValue;
     }}
